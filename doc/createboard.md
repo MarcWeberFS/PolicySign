@@ -1,6 +1,6 @@
 #  CREATE BOARD: PolicySign
 
-![Use case diagram](figures/uc-diagram.drawio.svg)
+![Use case diagram](figures/UC-Diagram.drawio.svg)
 
 ## IDEEN-BESCHREIBUNG
 - ermöglichen KMU und Startups das einfache Hochladen, Versenden und rechtsverbindliche Signieren von Dokumenten über eine digitale Plattform, basierend auf einem flexiblen Pay-as-you-go-Preismodell.
