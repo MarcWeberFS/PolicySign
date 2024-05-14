@@ -5,9 +5,9 @@ RUN apt-get update && apt-get install -y curl \
  && curl -L https://www.npmjs.com/install.sh | npm_install="10.2.3" | sh
 WORKDIR /usr/src/app
 COPY . .
-RUN cd freelancer4u-frontend && npm install
-RUN cd freelancer4u-frontend && npm run build
-RUN rm -r freelancer4u-frontend
+RUN cd policysign-frontend && npm install
+RUN cd policysign-frontend && npm run build
+RUN rm -r policysign-frontend
 RUN sed -i 's/\r$//' mvnw
 RUN chmod +x mvnw
 RUN ./mvnw package
