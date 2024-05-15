@@ -1,4 +1,4 @@
-package ch.zhaw.freelancer4u.config;
+package ch.zhaw.policysign.config;
 
 import org.springframework.core.io.Resource;
 
