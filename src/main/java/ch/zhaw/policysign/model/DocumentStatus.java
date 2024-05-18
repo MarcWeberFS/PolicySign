@@ -1,4 +1,4 @@
-package main.java.ch.zhaw.policysign.model;
+package ch.zhaw.policysign.model;
 
 public enum DocumentStatus {
     PENDING, SIGNED

@@ -1,4 +1,5 @@
-package main.java.ch.zhaw.policysign.model;
+package ch.zhaw.policysign.model;
+
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,14 +9,13 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "policysign")
-public class Document {
+public class PolicyDocument {
 
     @Id
     private String id;

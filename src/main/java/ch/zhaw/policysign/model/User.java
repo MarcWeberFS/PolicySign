@@ -1,4 +1,4 @@
-package main.java.ch.zhaw.policysign.model;
+package ch.zhaw.policysign.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
