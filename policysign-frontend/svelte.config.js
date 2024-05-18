@@ -11,8 +11,8 @@ const config = {
     kit: {
         adapter: adapter({
             // The "pages" option specifies where to output built files
-            pages: 'build',  // Customize this path as necessary
-            assets: 'build',  // Customize this path as necessary
+            pages: '../src/main/resources/static',  // Customize this path as necessary
+            assets: '../src/main/resources/static',  // Customize this path as necessary
             fallback: null   // Set to a file like 'index.html' if you want a SPA fallback
         }),
 
