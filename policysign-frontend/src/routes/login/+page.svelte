@@ -7,7 +7,7 @@
   let loginForm;
 
   $: if ($isAuthenticated) {
-    // Redirect or perform actions after successful login
+    window.location.href = "/";
   }
 
   function login() {

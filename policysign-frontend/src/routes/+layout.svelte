@@ -24,8 +24,10 @@
           <span class="font-bold text-xl">PolicySign</span>
         </a>
         <div class="hidden md:ml-6 md:flex md:space-x-4">
-          <a href="/freelancers" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Freelancers</a>
-          <a href="/jobs" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Jobs</a>
+          <a href="/pricing" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Pricing</a>
+          <a href="/documents" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Documents</a>
+          <a href="/upload" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Upload</a>
+          <a href="/signup" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Signup</a>
         </div>
       </div>
     </div>
@@ -34,8 +36,10 @@
   <!-- Mobile menu, show/hide based on menu state. -->
   <div class="md:hidden">
     <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-      <a href="/freelancers" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Freelancers</a>
-      <a href="/jobs" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Jobs</a>
+      <a href="/pricing" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Pricing</a>
+      <a href="/documents" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Documents</a>
+      <a href="/upload" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Upload</a>
+      <a href="/signup" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Signup</a>
     </div>
   </div>
 </nav>
