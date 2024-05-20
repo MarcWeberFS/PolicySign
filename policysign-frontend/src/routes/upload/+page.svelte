@@ -5,10 +5,10 @@
     let file;
     let pdfUrl = writable('');
     let pdfHeight = writable('500px');
-    let step = writable(1); // Track the current step
+    let step = writable(1);
     let markerX = writable(null);
     let markerY = writable(null);
-    let markerSize = writable(50); // Initial marker size
+    let markerSize = writable(50);
 
     const loadPdfJs = () => {
         return new Promise((resolve, reject) => {
@@ -44,8 +44,8 @@
 
     function onPdfClick(event) {
         const rect = event.currentTarget.getBoundingClientRect();
-        const x = event.clientX - rect.left; // x position within the element.
-        const y = event.clientY - rect.top;  // y position within the element.
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
         console.log(`Clicked coordinates: X=${x}, Y=${y}`);
         markerX.set(x);
         markerY.set(y);
@@ -94,7 +94,7 @@
 
             const fileUrl = result.data[0].fileUrl;
 
-            // Here you can handle the rest of the form data to send to a different API call
+
             const formData = {
                 email,
                 title,
@@ -102,18 +102,18 @@
                 xlocation: $markerX,
                 ylocation: $markerY,
                 width: $markerSize,
-                fileUrl: fileUrl // Use the returned file URL
+                fileUrl: fileUrl
             };
 
             console.log('Form Data:', formData);
-            // Send formData to your desired endpoint
+
         } catch (error) {
             console.error('Error uploading file:', error);
         }
     };
 </script>
 
-<!-- Step 1: File Upload -->
+
 {#if $step === 1}
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 class="text-3xl font-bold text-center mb-6">Upload Document</h1>
@@ -131,7 +131,6 @@
     </div>
 {/if}
 
-<!-- Step 2: Form and PDF Preview -->
 {#if $step === 2}
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 class="text-3xl font-bold text-center mb-6">Complete the Form</h1>
@@ -156,7 +155,6 @@
                     {#if $markerX !== null && $markerY !== null}
                         <div class="absolute" style="top: {$markerY}px; left: {$markerX}px;">
                             <div class="bg-red-500 rounded-full" style="width: {$markerSize}px; height: {$markerSize / 2}px;"></div>
-                            <!-- Slider for marker size as a popup -->
                             <div class="absolute bg-white p-2 border rounded shadow-md" style="top: -60px; left: 0; width: 200px">
                                 <input type="range" min="10" max="200" bind:value={$markerSize} class="w-full">
                             </div>
@@ -173,9 +171,8 @@
 {/if}
 
 <style>
-    /* Ensure the object element scales within its container */
     object {
         width: 100%;
-        min-height: 100%; /* Adjust this value based on your needs */
+        min-height: 100%;
     }
 </style>
