@@ -21,7 +21,7 @@ public class PolicyDocument {
     private String id;
     private String title;
     private String description;
-    private String documentBase64;
+    private String url;
     private DocumentStatus status = DocumentStatus.PENDING;
     private Date creationDate;
     private Date updateDate;
