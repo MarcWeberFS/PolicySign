@@ -1,9 +1,7 @@
 package ch.zhaw.policysign.repository;
 
+import ch.zhaw.policysign.model.PolicyDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import ch.zhaw.policysign.model.PolicyDocument;
-
-public interface PolicyDocumentRepository extends MongoRepository<PolicyDocument, String>{
-    
+public interface PolicyDocumentRepository extends MongoRepository<PolicyDocument, String> {
 }
