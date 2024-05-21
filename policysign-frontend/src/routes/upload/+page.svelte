@@ -2,7 +2,6 @@
     import { writable } from "svelte/store";
     import { v4 as uuidv4 } from "uuid";
 
-    // const api_root = "https://eb312e88-750d-45d8-b758-583e23dbd893.mock.pstmn.io";
     const api_root = "http://localhost:8080";
 
     let file;
@@ -12,6 +11,7 @@
     let markerX = writable(null);
     let markerY = writable(null);
     let markerSize = writable(50);
+    const fileUrl = writable('');
 
     let email = "";
     let title = "";
@@ -76,75 +76,32 @@
             return;
         }
 
-        const customId = uuidv4();
-
-        const fileData = {
-            files: [
-                {
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    customId: customId,
-                },
-            ],
-            acl: "public-read",
-            metadata: null,
-            contentDisposition: "inline",
-        };
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('signedByEmail', email);
+        formData.append('xSignature', $markerX);
+        formData.append('ySignature', $markerY);
+        formData.append('signatureWidth', $markerSize.toString());
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('userId', userIdValue);
 
         try {
-            const response = await fetch("https://uploadthing.com/api/uploadFiles", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Uploadthing-Api-Key": "sk_live_2363a711d4e24092166444bd64cd77152f35a439088498e01c12fc08c94da1dd",
-                    "X-Uploadthing-Be-Adapter": "express",
-                    "X-Uploadthing-Fe-Package": "@uploadthing/react",
-                    "X-Uploadthing-Version": "6.4.0",
-                },
-                body: JSON.stringify(fileData),
+            const response = await fetch(api_root + "/api/upload", {
+                method: 'POST',
+                body: formData
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (response.ok) {
+                const result = await response.json();
+                fileUrl.set(result.fileUrl);
+                successMessage.set("File uploaded successfully!");
+                console.log("Upload successful:", result);
+            } else {
+                const error = await response.json();
+                successMessage.set(`Error: ${error.message}`);
             }
-
-            const result = await response.json();
-            console.log("Upload successful:", result);
-
-            const fileUrl = result.data[0].fileUrl;
-
-            const documentData = {
-                id: customId,
-                userId: userIdValue, // Include userId in form data
-                signedByEmail: email,
-                title,
-                description,
-                xlocation: $markerX,
-                ylocation: $markerY,
-                signatureWidth: $markerSize,
-                url: fileUrl,
-            };
-
-            console.log("Document Data:", documentData);
-
-            const backendResponse = await fetch(api_root + "/api/upload", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(documentData),
-            });
-
-            if (!backendResponse.ok) {
-                throw new Error(`HTTP error! status: ${backendResponse.status}`);
-            }
-
-            const backendResult = await backendResponse.json();
-            console.log("Backend response:", backendResult);
             
-            // Set success message
-            successMessage.set("Document uploaded successfully!");
         } catch (error) {
             console.error("Error uploading file:", error);
             successMessage.set("Error uploading file. Please try again.");
