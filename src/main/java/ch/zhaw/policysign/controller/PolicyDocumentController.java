@@ -8,6 +8,8 @@ import ch.zhaw.policysign.service.EmailService;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.mail.MessagingException;
@@ -24,7 +26,7 @@ public class PolicyDocumentController {
     private EmailService emailService;
 
     @PostMapping
-    public PolicyDocument submitPolicyDocument(@RequestBody PolicyDocument policyDocument) throws MessagingException {
+    public ResponseEntity<PolicyDocument> submitPolicyDocument(@RequestBody PolicyDocument policyDocument) throws MessagingException {
         policyDocument.setCreationDate(new Date());
         policyDocument.setUpdateDate(new Date());
         policyDocument.setStatus(DocumentStatus.PENDING);
@@ -44,6 +46,6 @@ public class PolicyDocumentController {
         // Send email notification
         emailService.sendHtmlEmail(savedDocument.getSignedByEmail(), savedDocument.getTitle(), emailContent);
 
-        return savedDocument;
+        return new ResponseEntity<>(savedDocument, HttpStatus.OK);
     }
 }

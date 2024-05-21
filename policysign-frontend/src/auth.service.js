@@ -1,8 +1,11 @@
 import { createAuth0Client } from "@auth0/auth0-spa-js"; // npm install @auth0/auth0-spa-js
+import { writable } from "svelte/store";
 import { user, jwt_token } from "./store";
 import { goto } from '$app/navigation';
 import axios from "axios";
 import config from "./auth.config";
+
+export const userId = writable(null); // Define userId store
 
 let auth0Client;
 
@@ -14,12 +17,7 @@ async function createClient() {
 }
 
 // Auth0 signup endpoint documentation: see https://auth0.com/docs/libraries/custom-signup#using-the-api
-function signup(
-  email,
-  password,
-  firstName = null,
-  lastName = null
-) {
+function signup(email, password, firstName = null, lastName = null) {
   var options = {
     method: "post",
     url: `https://${config.auth0_domain}/dbconnections/signup`,
@@ -109,7 +107,14 @@ function getUserInfo(access_token) {
   axios(options)
     .then((response) => {
       const userInfo = response.data;
+      console.log("User Info:", userInfo); // Log user info to confirm
       user.set(userInfo);
+      if (userInfo.sub) {
+        userId.set(userInfo.sub); // Set userId store
+        console.log("User ID set:", userInfo.sub); // Log to confirm userId is set
+      } else {
+        console.log("No sub found in userInfo");
+      }
     })
     .catch(function (error) {
       alert("getUserInfo failed");
@@ -122,6 +127,7 @@ async function logout() {
     await createClient();
     user.set({});
     jwt_token.set("");
+    userId.set(null);
     await auth0Client.logout({logoutParams:{returnTo: window.location.origin}});
   } catch (e) {
     console.error(e);

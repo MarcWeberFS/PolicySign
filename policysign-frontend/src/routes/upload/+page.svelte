@@ -2,8 +2,8 @@
     import { writable } from "svelte/store";
     import { v4 as uuidv4 } from "uuid";
 
-    const api_root =
-        "https://eb312e88-750d-45d8-b758-583e23dbd893.mock.pstmn.io";
+    // const api_root = "https://eb312e88-750d-45d8-b758-583e23dbd893.mock.pstmn.io";
+    const api_root = "http://localhost:8080";
 
     let file;
     let pdfUrl = writable("");
@@ -13,6 +13,21 @@
     let markerY = writable(null);
     let markerSize = writable(50);
 
+    let email = "";
+    let title = "";
+    let description = "";
+    let userIdValue;
+    let successMessage = writable("");
+
+    const userSession = sessionStorage.getItem("user");
+    if (userSession) {
+        const userObject = JSON.parse(userSession);
+        userIdValue = userObject.sub;
+        console.log("User ID retrieved from session storage:", userIdValue);
+    } else {
+        console.log("No user found in session storage.");
+    }
+
     const loadPdfJs = () => {
         return new Promise((resolve, reject) => {
             if (window.pdfjsLib) {
@@ -20,8 +35,7 @@
                 return;
             }
             const script = document.createElement("script");
-            script.src =
-                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js";
+            script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js";
             script.onload = () => resolve();
             script.onerror = () => reject(new Error("Failed to load PDF.js"));
             document.head.appendChild(script);
@@ -42,10 +56,6 @@
         }
     };
 
-    let email = "";
-    let title = "";
-    let description = "";
-
     function onPdfClick(event) {
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.left;
@@ -60,6 +70,12 @@
     };
 
     const handleSubmit = async () => {
+        step.set(3); 
+        if (!userIdValue) {
+            alert("User ID is not set. Please login again.");
+            return;
+        }
+
         const customId = uuidv4();
 
         const fileData = {
@@ -77,21 +93,17 @@
         };
 
         try {
-            const response = await fetch(
-                "https://uploadthing.com/api/uploadFiles",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Uploadthing-Api-Key":
-                            "sk_live_2363a711d4e24092166444bd64cd77152f35a439088498e01c12fc08c94da1dd",
-                        "X-Uploadthing-Be-Adapter": "express",
-                        "X-Uploadthing-Fe-Package": "@uploadthing/react",
-                        "X-Uploadthing-Version": "6.4.0",
-                    },
-                    body: JSON.stringify(fileData),
+            const response = await fetch("https://uploadthing.com/api/uploadFiles", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Uploadthing-Api-Key": "sk_live_2363a711d4e24092166444bd64cd77152f35a439088498e01c12fc08c94da1dd",
+                    "X-Uploadthing-Be-Adapter": "express",
+                    "X-Uploadthing-Fe-Package": "@uploadthing/react",
+                    "X-Uploadthing-Version": "6.4.0",
                 },
-            );
+                body: JSON.stringify(fileData),
+            });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -102,39 +114,40 @@
 
             const fileUrl = result.data[0].fileUrl;
 
-            const formData = {
-                email,
+            const documentData = {
+                id: customId,
+                userId: userIdValue, // Include userId in form data
+                signedByEmail: email,
                 title,
                 description,
                 xlocation: $markerX,
                 ylocation: $markerY,
-                width: $markerSize,
-                fileUrl: fileUrl,
+                signatureWidth: $markerSize,
+                url: fileUrl,
             };
 
-            console.log("Form Data:", formData);
+            console.log("Document Data:", documentData);
 
-            const backendResponse = await fetch(
-                api_root + "/api/upload",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(formData),
+            const backendResponse = await fetch(api_root + "/api/upload", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            );
+                body: JSON.stringify(documentData),
+            });
 
             if (!backendResponse.ok) {
-                throw new Error(
-                    `HTTP error! status: ${backendResponse.status}`,
-                );
+                throw new Error(`HTTP error! status: ${backendResponse.status}`);
             }
 
             const backendResult = await backendResponse.json();
             console.log("Backend response:", backendResult);
+            
+            // Set success message
+            successMessage.set("Document uploaded successfully!");
         } catch (error) {
             console.error("Error uploading file:", error);
+            successMessage.set("Error uploading file. Please try again.");
         }
     };
 </script>
@@ -144,9 +157,7 @@
         <h1 class="text-3xl font-bold text-center mb-6">Upload Document</h1>
         <div class="bg-white shadow-md rounded px-6 pt-6 pb-8 mb-4">
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2"
-                    >Upload PDF</label
-                >
+                <label class="block text-gray-700 text-sm font-bold mb-2">Upload PDF</label>
                 <input
                     type="file"
                     on:change={uploadFile}
@@ -159,8 +170,9 @@
                     <button
                         on:click={handleNext}
                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        >Next</button
                     >
+                        Next
+                    </button>
                 </div>
             {/if}
         </div>
@@ -175,11 +187,7 @@
             class="bg-white shadow-md rounded px-6 pt-6 pb-8 mb-4"
         >
             <div class="mb-4">
-                <label
-                    for="email"
-                    class="block text-gray-700 text-sm font-bold mb-2"
-                    >E-Mail of the signee</label
-                >
+                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">E-Mail of the signee</label>
                 <input
                     type="text"
                     bind:value={email}
@@ -190,11 +198,7 @@
                 />
             </div>
             <div class="mb-4">
-                <label
-                    for="title"
-                    class="block text-gray-700 text-sm font-bold mb-2"
-                    >Title</label
-                >
+                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
                 <input
                     type="text"
                     bind:value={title}
@@ -205,11 +209,7 @@
                 />
             </div>
             <div class="mb-4">
-                <label
-                    for="description"
-                    class="block text-gray-700 text-sm font-bold mb-2"
-                    >Description</label
-                >
+                <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
                 <textarea
                     bind:value={description}
                     id="description"
@@ -219,28 +219,17 @@
             </div>
 
             {#if $pdfUrl}
-                <div
-                    class="relative overflow-auto mb-4"
-                    style="height: {$pdfHeight};"
-                >
-                    <object
-                        data={$pdfUrl}
-                        type="application/pdf"
-                        class="w-full h-full"
-                    ></object>
+                <div class="relative overflow-auto mb-4" style="height: {$pdfHeight};">
+                    <object data={$pdfUrl} type="application/pdf" class="w-full h-full"></object>
                     <div
                         class="absolute top-0 left-0 w-full h-full cursor-crosshair"
                         on:click={onPdfClick}
                     ></div>
                     {#if $markerX !== null && $markerY !== null}
-                        <div
-                            class="absolute"
-                            style="top: {$markerY}px; left: {$markerX}px;"
-                        >
+                        <div class="absolute" style="top: {$markerY}px; left: {$markerX}px;">
                             <div
                                 class="bg-red-500 rounded-full"
-                                style="width: {$markerSize}px; height: {$markerSize /
-                                    2}px;"
+                                style="width: {$markerSize}px; height: {$markerSize / 2}px;"
                             ></div>
                             <div
                                 class="absolute bg-white p-2 border rounded shadow-md"
@@ -263,10 +252,19 @@
                 <button
                     type="submit"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    >Submit</button
                 >
+                    Submit
+                </button>
             </div>
         </form>
+    </div>
+{/if}
+
+{#if $step === 3}
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+            <span class="block sm:inline">{$successMessage}</span>
+        </div>
     </div>
 {/if}
 
