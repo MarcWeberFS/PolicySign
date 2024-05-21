@@ -1,12 +1,12 @@
 package ch.zhaw.policysign.model;
 
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
@@ -14,6 +14,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Document(collection = "policysign")
 public class PolicyDocument {
 
@@ -21,10 +22,10 @@ public class PolicyDocument {
     private String id;
     private String title;
     private String description;
-    private String documentBase64;
+    private String url;
     private DocumentStatus status = DocumentStatus.PENDING;
-    private Date creationDate;
-    private Date updateDate;
+    private Date creationDate = new Date();
+    private Date updateDate = new Date();
     private int xSignature;
     private int ySignature;
     private int signatureWidth;
