@@ -38,9 +38,9 @@ public class PolicyDocumentController {
             @RequestParam("signedByEmail") String email,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
-            @RequestParam("xSignature") int xSignature,
-            @RequestParam("ySignature") int ySignature,
-            @RequestParam("signatureWidth") int signatureWidth,
+            @RequestParam("xSignature") float xSignature,
+            @RequestParam("ySignature") float ySignature,
+            @RequestParam("signatureWidth") float signatureWidth,
             @RequestParam("userId") String userId) throws MessagingException, IOException {
         
         String fileName = UUID.randomUUID().toString() + ".pdf"; // Use UUID for unique file names

@@ -16,6 +16,9 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>21</java.version>
+        <sonar.organization>policysign</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.projectKey>ch.zhaw.weberm08.policysign_policysign</sonar.projectKey>
     </properties>
     <dependencies>
         <dependency>
