@@ -5,12 +5,23 @@ import ch.zhaw.policysign.repository.PolicyDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PolicyDocumentService {
+
     @Autowired
     private PolicyDocumentRepository policyDocumentRepository;
 
     public PolicyDocument savePolicyDocument(PolicyDocument policyDocument) {
         return policyDocumentRepository.save(policyDocument);
+    }
+
+    public List<PolicyDocument> getAllPolicyDocuments() {
+        return policyDocumentRepository.findAll();
+    }
+
+    public PolicyDocument getPolicyDocumentById(String id) {
+        return policyDocumentRepository.findById(id).orElse(null);
     }
 }

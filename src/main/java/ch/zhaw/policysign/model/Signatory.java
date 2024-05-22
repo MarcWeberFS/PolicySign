@@ -1,6 +1,7 @@
 package ch.zhaw.policysign.model;
 
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,9 +14,13 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "policysign")
+@Document(collection = "signatories")
 public class Signatory {
     
+    @Id
+    private String id;
     private boolean signed;
     private Date signDate;
+    private String documentId;
+    private String signatureDataUrl; 
 }

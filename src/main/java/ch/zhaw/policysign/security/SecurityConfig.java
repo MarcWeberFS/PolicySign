@@ -16,6 +16,17 @@ public class SecurityConfig {
             .csrf().disable()
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/upload").permitAll()
+                .requestMatchers("/api/signature").permitAll()
+                .requestMatchers("/api/signature/**").permitAll()
+                .requestMatchers("/signature/**").permitAll()
+                .requestMatchers("/signature").permitAll()
+                .requestMatchers("/api/upload/all").permitAll()
+
+
+
+
+
+                
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
             )

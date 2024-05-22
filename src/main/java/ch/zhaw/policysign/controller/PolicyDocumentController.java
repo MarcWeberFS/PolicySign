@@ -16,6 +16,7 @@ import jakarta.mail.MessagingException;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/upload")
@@ -42,7 +43,7 @@ public class PolicyDocumentController {
             @RequestParam("signatureWidth") int signatureWidth,
             @RequestParam("userId") String userId) throws MessagingException, IOException {
         
-        String fileName = file.getOriginalFilename();
+        String fileName = UUID.randomUUID().toString() + ".pdf"; // Use UUID for unique file names
         String fileUrl = uploadFileToS3(file, fileName);
 
         PolicyDocument policyDocument = new PolicyDocument();
@@ -53,7 +54,7 @@ public class PolicyDocumentController {
         policyDocument.setTitle(title);
         policyDocument.setDescription(description);
         policyDocument.setUserId(userId);
-        policyDocument.setUrl(fileUrl);
+        policyDocument.setUrl(fileName); // Store only the key
         policyDocument.setXSignature(xSignature);
         policyDocument.setYSignature(ySignature);
         policyDocument.setSignatureWidth(signatureWidth);
@@ -67,6 +68,7 @@ public class PolicyDocumentController {
                 "<p>A new policy document requires your signature.</p>" +
                 "<p><b>Description:</b> " + savedDocument.getDescription() + "</p>" +
                 "<p>Please review and sign the document at your earliest convenience.</p>" +
+                "<p><a href='http://localhost:8080/signature?id=" + savedDocument.getId() + "'>Click here to sign the document</a></p>" +
                 "<p>Thank you.</p>" +
                 "</body>" +
                 "</html>";
@@ -83,11 +85,11 @@ public class PolicyDocumentController {
                 .key(fileName)
                 .contentType(file.getContentType())
                 .build();
-
+    
         PutObjectResponse response = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
-
+    
         if (response.sdkHttpResponse().isSuccessful()) {
-            return "https://" + "policysign" + ".s3.amazonaws.com/" + fileName + "?timestamp=" + System.currentTimeMillis();
+            return fileName; // Return just the key
         } else {
             throw new RuntimeException("Failed to upload file to S3");
         }
