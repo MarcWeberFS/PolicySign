@@ -24,4 +24,8 @@ public class PolicyDocumentService {
     public PolicyDocument getPolicyDocumentById(String id) {
         return policyDocumentRepository.findById(id).orElse(null);
     }
+
+    public List<PolicyDocument> getDocumentsByUserId(String userId) {
+        return policyDocumentRepository.findByUserId(userId);
+    }
 }

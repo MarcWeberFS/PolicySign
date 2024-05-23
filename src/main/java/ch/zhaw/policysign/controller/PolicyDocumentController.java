@@ -5,17 +5,33 @@ import ch.zhaw.policysign.model.PolicyDocument;
 import ch.zhaw.policysign.service.PolicyDocumentService;
 import ch.zhaw.policysign.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-
+import software.amazon.awssdk.services.s3.model.S3Object;
 import jakarta.mail.MessagingException;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -77,6 +93,40 @@ public class PolicyDocumentController {
         emailService.sendHtmlEmail(savedDocument.getSignedByEmail(), savedDocument.getTitle(), emailContent);
 
         return savedDocument;
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<PolicyDocument> getDocumentsByUserId(@PathVariable String userId) {
+        System.out.println("Getting documents for user ID: " + userId);
+        return policyDocumentService.getDocumentsByUserId(userId);
+    }
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<InputStreamResource> downloadDocument(@PathVariable String id) {
+        PolicyDocument document = policyDocumentService.getPolicyDocumentById(id);
+
+        if (document.getUrl() == null || document.getUrl().isEmpty()) {
+            throw new IllegalArgumentException("The document URL is null or empty");
+        }
+
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket("policysign")
+                .key(document.getUrl())
+                .build();
+
+        ResponseInputStream<GetObjectResponse> s3Object;
+        try {
+            s3Object = s3Client.getObject(getObjectRequest);
+        } catch (NoSuchKeyException e) {
+            throw new RuntimeException("Document not found in S3", e);
+        }
+
+        InputStreamResource resource = new InputStreamResource(s3Object);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getTitle() + ".pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
     }
 
     private String uploadFileToS3(MultipartFile file, String fileName) throws IOException {
