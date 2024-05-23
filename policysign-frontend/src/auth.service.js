@@ -5,7 +5,7 @@ import { goto } from '$app/navigation';
 import axios from "axios";
 import config from "./auth.config";
 
-export const userId = writable(null); // Define userId store
+export const userId = writable(localStorage.getItem('userId')); // Initialize userId store from local storage
 const api_root = "http://localhost:8080";
 let auth0Client;
 
@@ -16,9 +16,8 @@ async function createClient() {
   });
 }
 
-// Auth0 signup endpoint documentation: see https://auth0.com/docs/libraries/custom-signup#using-the-api
 async function signup(email, password, firstName = null, lastName = null) {
-  var options = {
+  const options = {
     method: "post",
     url: `https://${config.auth0_domain}/dbconnections/signup`,
     data: {
@@ -26,29 +25,16 @@ async function signup(email, password, firstName = null, lastName = null) {
       email: email,
       password: password,
       connection: "Username-Password-Authentication",
-      // you can set any of these properties as well if needed
-      // username: "johndoe", // if not provided, email will be used as username for login. if provided, username has to be validated (must not already exist)
-      // given_name: firstName,
-      // family_name: lastName,
-      // nickname: "Johnny", // if not provided, the part before the @ of the e-mail address will be used
-      // name: "John Doe",
-      // picture: "http://example.org/jdoe.png",
+      given_name: firstName,
+      family_name: lastName,
     },
   };
 
-  if (firstName && firstName.length > 0) {
-    options.data.given_name = firstName;
-  }
-
-  if (lastName && lastName.length > 0) {
-    options.data.family_name = lastName;
-  }
-
   try {
     const signupResponse = await axios(options);
-    console.log("Signup successful1", signupResponse);
+    console.log("Signup successful", signupResponse);
 
-    // wait 2 seconds to ensure roles are set in Auth0
+    // Wait 2 seconds to ensure roles are set in Auth0
     setTimeout(async () => {
       await saveUserToDB(signupResponse.data);
       await login(email, password, true);
@@ -60,7 +46,7 @@ async function signup(email, password, firstName = null, lastName = null) {
 }
 
 function login(username, password, redirectToHome = false) {
-  var options = {
+  const options = {
     method: "post",
     url: `https://${config.auth0_domain}/oauth/token`,
     data: {
@@ -78,23 +64,23 @@ function login(username, password, redirectToHome = false) {
       const { id_token, access_token } = response.data;
       jwt_token.set(id_token);
       console.log(id_token);
+      localStorage.setItem("jwt_token", id_token);
       getUserInfo(access_token);
       if (redirectToHome) {
-        // go to start page after 500ms. Explanation: if we do not wait, the login form on the
-        // start page might still be visible because $isAuthenticated is not yet set to true.
+        // Go to start page after 500ms to ensure isAuthenticated is set
         setTimeout(() => {
-          goto("/") 
+          goto("/");
         }, 500);
       }
     })
     .catch(function (error) {
-      alert("login failed");
+      alert("Login failed");
       console.log(error);
     });
 }
 
 function getUserInfo(access_token) {
-  var options = {
+  const options = {
     method: "get",
     url: `https://${config.auth0_domain}/oauth/userinfo`,
     headers: {
@@ -110,13 +96,14 @@ function getUserInfo(access_token) {
       user.set(userInfo);
       if (userInfo.sub) {
         userId.set(userInfo.sub); // Set userId store
+        localStorage.setItem('userId', userInfo.sub); // Store userId in localStorage
         console.log("User ID set:", userInfo.sub); // Log to confirm userId is set
       } else {
         console.log("No sub found in userInfo");
       }
     })
     .catch(function (error) {
-      alert("getUserInfo failed");
+      alert("Get user info failed");
       console.log(error);
     });
 }
@@ -127,18 +114,13 @@ async function logout() {
     user.set({});
     jwt_token.set("");
     userId.set(null);
-    await auth0Client.logout({logoutParams:{returnTo: window.location.origin}});
+    localStorage.removeItem('userId');
+    await auth0Client.logout({ logoutParams: { returnTo: window.location.origin } });
   } catch (e) {
     console.error(e);
   }
-  goto("/") // return to main page
+  goto("/"); // Return to main page
 }
-
-const auth = {
-  signup,
-  login,
-  logout,
-};
 
 async function saveUserToDB(userInfo) {
   try {
@@ -151,7 +133,7 @@ async function saveUserToDB(userInfo) {
         username: `${userInfo.given_name} ${userInfo.family_name}`,
         email: userInfo.email,
         roles: ['user'],
-        id: `auth0|${userInfo._id}`, // Assuming signupResponse contains userId or similar field
+        id: userInfo.sub, // Use the sub as the ID
       })
     });
 
@@ -165,5 +147,11 @@ async function saveUserToDB(userInfo) {
     console.error("Error saving user to DB", error);
   }
 }
+
+const auth = {
+  signup,
+  login,
+  logout,
+};
 
 export default auth;

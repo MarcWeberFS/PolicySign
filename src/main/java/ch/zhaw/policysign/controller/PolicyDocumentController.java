@@ -16,6 +16,7 @@ import jakarta.mail.MessagingException;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -77,6 +78,12 @@ public class PolicyDocumentController {
         emailService.sendHtmlEmail(savedDocument.getSignedByEmail(), savedDocument.getTitle(), emailContent);
 
         return savedDocument;
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<PolicyDocument> getDocumentsByUserId(@PathVariable String userId) {
+        System.out.println("Getting documents for user ID: " + userId);
+        return policyDocumentService.getDocumentsByUserId(userId);
     }
 
     private String uploadFileToS3(MultipartFile file, String fileName) throws IOException {
