@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/users/**").permitAll()
                 .requestMatchers("/api/documents/**").permitAll()
                 .requestMatchers("/api/upload/user/**").permitAll()
+                .requestMatchers("/api/upload/download/**").permitAll()
 
 
 

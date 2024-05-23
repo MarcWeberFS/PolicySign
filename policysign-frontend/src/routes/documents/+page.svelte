@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { userId } from '../../auth.service'; // Ensure you have the userId from your auth service
+    import { userId } from '../../auth.service';
     import { get } from 'svelte/store';
 
     let documents = [];
@@ -8,7 +8,6 @@
 
     const api_root = "http://localhost:8080";
 
-    // Redirect to login if not authenticated
     $: if (!get(userId)) {
         window.location.href = "/login";
     }
@@ -77,17 +76,17 @@
         {#each documents as document}
             <div class="document-card w-full p-4">
                 <div class="bg-white shadow-md rounded-lg p-6">
-                    <h2 class="text-xl font-bold mb-2">{document.title}</h2>
+                    <h2 class="text-xl font-bold mb-2">
+                        <a href={`${api_root}/api/upload/download/${document.id}`} download="{document.title}.pdf">{document.title}</a>
+                    </h2>
                     <div class="document-details">
                         <div>
                             <p><span class="label">Signed by:</span> {document.signedByEmail}</p>
                         </div>
                         <div>
-                            <div>
-                                <p class="status-label {document.status === 'PENDING' ? 'status-pending' : 'status-signed'}">
-                                    {document.status}
-                                </p>
-                            </div>
+                            <p class="status-label {document.status === 'PENDING' ? 'status-pending' : 'status-signed'}">
+                                {document.status}
+                            </p>
                         </div>
                         <div>
                             <p><span class="label">Created on:</span> {new Date(document.creationDate).toLocaleDateString()}</p>
