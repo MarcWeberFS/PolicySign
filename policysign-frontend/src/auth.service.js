@@ -6,7 +6,7 @@ import axios from "axios";
 import config from "./auth.config";
 
 export const userId = writable(null); // Define userId store
-
+const api_root = "http://localhost:8080";
 let auth0Client;
 
 async function createClient() {
@@ -17,7 +17,7 @@ async function createClient() {
 }
 
 // Auth0 signup endpoint documentation: see https://auth0.com/docs/libraries/custom-signup#using-the-api
-function signup(email, password, firstName = null, lastName = null) {
+async function signup(email, password, firstName = null, lastName = null) {
   var options = {
     method: "post",
     url: `https://${config.auth0_domain}/dbconnections/signup`,
@@ -28,8 +28,8 @@ function signup(email, password, firstName = null, lastName = null) {
       connection: "Username-Password-Authentication",
       // you can set any of these properties as well if needed
       // username: "johndoe", // if not provided, email will be used as username for login. if provided, username has to be validated (must not already exist)
-      // given_name: "John",
-      // family_name: "Doe",
+      // given_name: firstName,
+      // family_name: lastName,
       // nickname: "Johnny", // if not provided, the part before the @ of the e-mail address will be used
       // name: "John Doe",
       // picture: "http://example.org/jdoe.png",
@@ -44,20 +44,19 @@ function signup(email, password, firstName = null, lastName = null) {
     options.data.family_name = lastName;
   }
 
-  axios(options)
-    .then((response) => {
-      // wait 2 seconds. Explanation: The user roles are set automatically on signup,
-      // but we have to wait a short amount of time to make sure that the roles are
-      // stored in the database of auth0. Otherwise the roles may not be in the
-      // userinfo object on the first login.
-      setTimeout(() => {
-        login(email, password, true);
-      }, 2000);
-    })
-    .catch(function (error) {
-      alert("signup failed: " + error);
-      console.log(error);
-    });
+  try {
+    const signupResponse = await axios(options);
+    console.log("Signup successful1", signupResponse);
+
+    // wait 2 seconds to ensure roles are set in Auth0
+    setTimeout(async () => {
+      await saveUserToDB(signupResponse.data);
+      await login(email, password, true);
+    }, 2000);
+  } catch (error) {
+    alert("Signup failed: " + error);
+    console.log(error);
+  }
 }
 
 function login(username, password, redirectToHome = false) {
@@ -140,5 +139,31 @@ const auth = {
   login,
   logout,
 };
+
+async function saveUserToDB(userInfo) {
+  try {
+    const response = await fetch(`${api_root}/api/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: `${userInfo.given_name} ${userInfo.family_name}`,
+        email: userInfo.email,
+        roles: ['user'],
+        id: `auth0|${userInfo._id}`, // Assuming signupResponse contains userId or similar field
+      })
+    });
+
+    if (response.ok) {
+      console.log("User saved to DB");
+    } else {
+      const errorData = await response.json();
+      console.error("Failed to save user to DB", errorData);
+    }
+  } catch (error) {
+    console.error("Error saving user to DB", error);
+  }
+}
 
 export default auth;

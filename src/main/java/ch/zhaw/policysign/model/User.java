@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Document(collection = "policysign")
+@Document(collection = "users")
 public class User {
 
     @Id

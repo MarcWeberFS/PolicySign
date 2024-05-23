@@ -26,9 +26,9 @@ public class PolicyDocument {
     private DocumentStatus status = DocumentStatus.PENDING;
     private Date creationDate = new Date();
     private Date updateDate = new Date();
-    private int xSignature;
-    private int ySignature;
-    private int signatureWidth;
+    private float xSignature;
+    private float ySignature;
+    private float signatureWidth;
     private int signaturePage;
     private String userId;
     private String signedByEmail;

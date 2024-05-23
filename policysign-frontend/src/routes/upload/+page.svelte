@@ -52,18 +52,44 @@
             await loadPdfJs();
             const pdfDoc = await pdfjsLib.getDocument(objectUrl).promise;
             const pageCount = pdfDoc.numPages;
-            pdfHeight.set(`${pageCount * 1100}px`);
+            pdfHeight.set(`${pageCount * 842 + 60}px`);
         }
     };
 
     function onPdfClick(event) {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        console.log(`Clicked coordinates: X=${x}, Y=${y}`);
-        markerX.set(x);
-        markerY.set(y);
-    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Actual dimensions of an A4 page in points
+    const actualWidth = 595.28;
+    const actualHeight = 841.89;
+
+    // Displayed dimensions of the PDF container
+    const displayedWidth = rect.width;
+    const displayedHeight = rect.height;
+
+    console.log('displayedWidth', displayedWidth);
+    console.log('displayedHeight', displayedHeight);
+
+    // Calculate the scaling factors
+    const scaleX = actualWidth / displayedWidth;
+    const scaleY = actualHeight / displayedHeight;
+
+    // Adjust the click coordinates
+    const adjustedX = x * scaleX;
+    const adjustedY = y * scaleY;
+
+    // Ensure coordinates stay within the boundaries of the actual PDF dimensions
+    const clampedX = Math.min(Math.max(adjustedX, 0), actualWidth);
+    const clampedY = Math.min(Math.max(adjustedY, 0), actualHeight);
+
+    console.log(`Clicked coordinates: X=${clampedX}, Y=${clampedY}`);
+    markerX.set(clampedX);
+    markerY.set(clampedY);
+}
+
+
 
     const handleNext = () => {
         step.set(2);
@@ -227,7 +253,6 @@
 
 <style>
     object {
-        width: 100%;
-        min-height: 100%;
+        width: 600px;
     }
 </style>
