@@ -12,6 +12,8 @@
   let showFirstNameError = false;
   let showLastNameError = false;
 
+  const api_root = "http://localhost:8080";
+
   $: if ($isAuthenticated) {
     email = "";
     password = "";
@@ -19,18 +21,23 @@
     lastName = "";
   }
 
-  function signup() {
+  async function signup() {
     showEmailError = !email;
     showPasswordError = !password;
     showFirstNameError = !firstName;
     showLastNameError = !lastName;
 
     if (signupForm.checkValidity()) {
-      console.log("signup");
-      auth.signup(email, password, firstName, lastName);
+      try {
+        await auth.signup(email, password, firstName, lastName);
+      } catch (error) {
+        console.error("Signup failed", error);
+      }
     }
     signupForm.classList.add("was-validated");
   }
+
+  
 </script>
 
 <h1 class="text-3xl font-bold text-center mb-6">Sign up</h1>

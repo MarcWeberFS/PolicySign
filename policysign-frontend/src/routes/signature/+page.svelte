@@ -69,12 +69,15 @@
 
     const saveSignature = async () => {
         const dataUrl = canvas.toDataURL("image/png");
+        const payload = {
+            signatureDataUrl: dataUrl
+        };
         const response = await fetch(`${api_root}/signature/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(dataUrl)
+            body: JSON.stringify(payload)
         });
 
         if (response.ok) {

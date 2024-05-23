@@ -21,12 +21,13 @@ public class SecurityConfig {
                 .requestMatchers("/signature/**").permitAll()
                 .requestMatchers("/signature").permitAll()
                 .requestMatchers("/api/upload/all").permitAll()
+                .requestMatchers("/api/users").permitAll()
 
 
 
 
 
-                
+
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
             )
