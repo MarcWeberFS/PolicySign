@@ -28,4 +28,13 @@ public class PolicyDocumentService {
     public List<PolicyDocument> getDocumentsByUserId(String userId) {
         return policyDocumentRepository.findByUserId(userId);
     }
+
+    public long getPolicyDocumentCount() {
+        return policyDocumentRepository.count();
+    }
+
+    public void deletePolicyDocument(String id) {
+        policyDocumentRepository.deleteById(id);
+    }
+
 }
