@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.bind.annotation.PostMapping;
+
 
 @RestController
 @RequestMapping("/api/upload")
@@ -128,6 +130,22 @@ public class PolicyDocumentController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(resource);
     }
+
+    @GetMapping("/all")
+    public List<PolicyDocument> getAllDocuments() {
+        return policyDocumentService.getAllPolicyDocuments();
+    }
+
+    @GetMapping("/count")
+    public long getDocumentCount() {
+        return policyDocumentService.getPolicyDocumentCount();
+    }
+
+    @PostMapping("/delete/{id}")
+    public void deleteDocument(@PathVariable String id) {
+        policyDocumentService.deletePolicyDocument(id);
+    }    
+
 
     private String uploadFileToS3(MultipartFile file, String fileName) throws IOException {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
