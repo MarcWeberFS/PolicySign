@@ -1,25 +1,17 @@
 <script>
     import { writable, get } from 'svelte/store';
     import { userId } from '../../auth.service';
-    import { onMount } from 'svelte';
+    import { onMount, afterUpdate } from 'svelte';
+    import hljs from 'highlight.js';
+    import 'highlight.js/styles/github.css';
 
-    // State variables
-    const step = writable(1);
-    const pdfUrl = writable('');
-    const pdfHeight = writable('500px');
-    const markerX = writable(null);
-    const markerY = writable(null);
-    const markerSize = writable(50);
-    const successMessage = writable('');
     let link = true;
-    let email = '';
     let language = 'java';
 
     let userIdValue;
     let template = {};
     let error = '';
 
-    // Fetch template function
     async function fetchTemplate(id) {
         try {
             const response = await fetch(`http://localhost:8080/api/templates/${id}`);
@@ -33,7 +25,6 @@
         }
     }
 
-    // Get the template ID from the URL
     onMount(async () => {
         userIdValue = get(userId);
         if (!userIdValue) {
@@ -46,153 +37,138 @@
         await fetchTemplate(id);
     });
 
-    // PDF click handler
-    function onPdfClick(event) {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+    afterUpdate(() => {
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+    });
 
-        const actualWidth = 595.28;
-        const actualHeight = 841.89;
 
-        const displayedWidth = rect.width;
-        const displayedHeight = rect.height;
-
-        const scaleX = actualWidth / displayedWidth;
-        const scaleY = actualHeight / displayedHeight;
-
-        const adjustedX = x * scaleX;
-        const adjustedY = y * scaleY;
-
-        const clampedX = Math.min(Math.max(adjustedX, 0), actualWidth);
-        const clampedY = Math.min(Math.max(adjustedY, 0), actualHeight);
-
-        markerX.set(clampedX);
-        markerY.set(clampedY);
-    }
-
-    // Generate API call code
-    function generateApiCall(language, id, link, email, userId) {
+    function generateApiCall(language, id, link, userId) {
         switch (language) {
             case 'java':
                 return `
-                    import java.io.*;
-                    import java.net.*;
-                    public class ApiCall {
-                        public static void main(String[] args) throws Exception {
-                            URL url = new URL("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=${email}&userId=${userId}");
-                            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                            con.setRequestMethod("POST");
-                            con.setRequestProperty("Content-Type", "application/json; utf-8");
-                            con.setRequestProperty("Accept", "application/json");
-                            con.setDoOutput(true);
-                            try (OutputStream os = con.getOutputStream()) {
-                                byte[] input = "{}".getBytes("utf-8");
-                                os.write(input, 0, input.length);
-                            }
-                            try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
-                                StringBuilder response = new StringBuilder();
-                                String responseLine;
-                                while ((responseLine = br.readLine()) != null) {
-                                    response.append(responseLine.trim());
-                                }
-                                System.out.println(response.toString());
-                            }
-                        }
-                    }
+import java.io.*;
+import java.net.*;
+public class ApiCall {
+    public static void main(String[] args) throws Exception {
+        URL url = new URL("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json; utf-8");
+        con.setRequestProperty("Accept", "application/json");
+        con.setDoOutput(true);
+        try (OutputStream os = con.getOutputStream()) {
+            byte[] input = "{}".getBytes("utf-8");
+            os.write(input, 0, input.length);
+        }
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
+            StringBuilder response = new StringBuilder();
+            String responseLine;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+            System.out.println(response.toString());
+        }
+    }
+}
                 `;
             case 'curl':
                 return `
-                    curl -X POST "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=${email}&userId=${userId}" -H "Content-Type: application/json"
+curl -X POST "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}" -H "Content-Type: application/json"
                 `;
             case 'python':
                 return `
-                    import requests
+import requests
 
-                    url = "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=${email}&userId=${userId}"
-                    response = requests.post(url, headers={"Content-Type": "application/json"})
-                    print(response.text)
+url = "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}"
+response = requests.post(url, headers={"Content-Type": "application/json"})
+print(response.text)
                 `;
             case 'javascript':
                 return `
-                    fetch("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=${email}&userId=${userId}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({})
-                    })
-                    .then(response => response.json())
-                    .then(data => console.log(data));
+fetch("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({})
+})
+.then(response => response.json())
+.then(data => console.log(data));
                 `;
             case 'php':
                 return `
-                    <?php
-                    $url = "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=${email}&userId=${userId}";
-                    $options = array(
-                        'http' => array(
-                            'header'  => "Content-type: application/json\\r\\n",
-                            'method'  => 'POST',
-                            'content' => '{}',
-                        ),
-                    );
-                    $context  = stream_context_create($options);
-                    $result = file_get_contents($url, false, $context);
-                    if ($result === FALSE) { /* Handle error */ }
-                    var_dump($result);
-                    ?>
+<?php
+$url = "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}";
+$options = array(
+    'http' => array(
+        'header'  => "Content-type: application/json\\r\\n",
+        'method'  => 'POST',
+        'content' => '{}',
+    ),
+);
+$context  = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+if ($result === FALSE) { /* Handle error */ }
+var_dump($result);
+?>
                 `;
         }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Copied to clipboard');
+        }, (err) => {
+            console.error('Could not copy text: ', err);
+        });
     }
 </script>
 
 {#if error}
-    <p class="error">{error}</p>
+    <p class="text-red-500">{error}</p>
 {:else}
     {#if template.title}
-        <div>
-            <h1>{template.title}</h1>
-            <p>{template.description}</p>
+        <div class="container mx-auto p-4">
+            <h1 class="text-3xl font-bold mb-4">{template.title}</h1>
+            <p class="text-gray-700 mb-6">{template.description}</p>
 
-            <label>
-                <input type="checkbox" bind:checked={link}>
-                Link
+            <label class="inline-flex items-center mb-4">
+                <input type="checkbox" bind:checked={link} class="form-checkbox text-blue-600">
+                <span class="ml-2">Link</span>
             </label>
 
-            <div class:visible={!link}>
-                <label for="email">E-Mail of the signee</label>
-                <input
-                    type="email"
-                    bind:value={email}
-                    id="email"
-                    placeholder="E-Mail"
-                    class="input"
-                    required={!link}
-                />
-            </div>
-
-            <h2>API Calls</h2>
-            <div>
-                <label>
-                    <input type="radio" name="language" value="java" bind:group={language}> Java
+            <h2 class="text-2xl font-semibold mb-4">API Calls</h2>
+            <div class="mb-4">
+                <label class="inline-flex items-center mr-4">
+                    <input type="radio" name="language" value="java" bind:group={language} class="form-radio text-blue-600">
+                    <span class="ml-2">Java</span>
                 </label>
-                <label>
-                    <input type="radio" name="language" value="curl" bind:group={language}> Curl
+                <label class="inline-flex items-center mr-4">
+                    <input type="radio" name="language" value="curl" bind:group={language} class="form-radio text-blue-600">
+                    <span class="ml-2">Curl</span>
                 </label>
-                <label>
-                    <input type="radio" name="language" value="python" bind:group={language}> Python
+                <label class="inline-flex items-center mr-4">
+                    <input type="radio" name="language" value="python" bind:group={language} class="form-radio text-blue-600">
+                    <span class="ml-2">Python</span>
                 </label>
-                <label>
-                    <input type="radio" name="language" value="javascript" bind:group={language}> JavaScript
+                <label class="inline-flex items-center mr-4">
+                    <input type="radio" name="language" value="javascript" bind:group={language} class="form-radio text-blue-600">
+                    <span class="ml-2">JavaScript</span>
                 </label>
-                <label>
-                    <input type="radio" name="language" value="php" bind:group={language}> PHP
+                <label class="inline-flex items-center">
+                    <input type="radio" name="language" value="php" bind:group={language} class="form-radio text-blue-600">
+                    <span class="ml-2">PHP</span>
                 </label>
             </div>
 
-            <pre>
-                <code>{generateApiCall(language, template.id, link, email, userIdValue)}</code>
+            <pre class="text-sm bg-gray-100 p-4 rounded mb-4 overflow-x-auto">
+                <code>{generateApiCall(language, template.id, link, userIdValue)}</code>
             </pre>
+            <button on:click={() => copyToClipboard(generateApiCall(language, template.id, link, userIdValue))} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Copy to Clipboard
+            </button>
         </div>
     {:else}
         <p>Loading template...</p>
