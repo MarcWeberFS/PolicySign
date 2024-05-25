@@ -200,7 +200,7 @@
             <h1 class="text-3xl font-bold text-center mb-6">My Templates</h1>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {#each $templates as template}
-                    <div class="bg-white shadow-md rounded px-6 pt-6 pb-8 mb-4 cursor-pointer" on:click={() => window.location.href = `/template/${template.id}`}>
+                    <div class="bg-white shadow-md rounded px-6 pt-6 pb-8 mb-4 cursor-pointer" on:click={() => window.location.href = `/templateid?id=${template.id}`}>
                         <h2 class="text-xl font-bold mb-2">{template.title}</h2>
                         <p class="text-gray-600">{template.description}</p>
                     </div>
