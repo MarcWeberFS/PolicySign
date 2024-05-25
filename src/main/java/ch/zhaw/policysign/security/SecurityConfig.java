@@ -29,6 +29,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/upload/delete/**").permitAll()
                 .requestMatchers("/api/upload/all").permitAll()
                 .requestMatchers("/api/upload/count").permitAll()
+                .requestMatchers("/api/templates/**").permitAll()
+                .requestMatchers("/api/templates").permitAll()
 
 
 
