@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -75,6 +76,12 @@ public class TemplateController {
     public Optional<Template> getTemplateById(@PathVariable String id) {
         return templateService.getTemplateById(id);
     }
+
+    @GetMapping("/user/{userId}")
+    public List<Template> getTemplatesByUserId(@PathVariable String userId) {
+        return templateService.getTemplatesByUserId(userId);
+    }
+
 
     @DeleteMapping("/{id}")
     public void deleteTemplate(@PathVariable String id) {

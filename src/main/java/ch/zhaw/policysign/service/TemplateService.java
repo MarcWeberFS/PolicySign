@@ -28,4 +28,9 @@ public class TemplateService {
     public void deleteTemplate(String id) {
         templateRepository.deleteById(id);
     }
+
+    public List<Template> getTemplatesByUserId(String userId) {
+        return templateRepository.findByUserId(userId);
+    }
+    
 }

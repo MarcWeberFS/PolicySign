@@ -1,6 +1,5 @@
 <script>
-    import { writable } from "svelte/store";
-    import { get, derived } from 'svelte/store';
+    import { writable, get } from 'svelte/store';
     import { userId } from '../../auth.service';
     import { onMount, onDestroy } from 'svelte';
 
@@ -14,6 +13,7 @@
     const markerY = writable(null);
     const markerSize = writable(50);
     const successMessage = writable('');
+    const templates = writable([]);
 
     // Form fields
     let file;
@@ -29,6 +29,8 @@
         userIdValue = get(userId);
         if (!userIdValue) {
             window.location.href = "/login";
+        } else {
+            fetchTemplates(userIdValue);
         }
     });
 
@@ -46,6 +48,24 @@
             document.head.appendChild(script);
         });
     };
+
+    // Fetch templates for the user
+    async function fetchTemplates(userId) {
+        try {
+            const response = await fetch(`${api_root}/api/templates/user/${userId}`, {
+                method: 'GET'
+            });
+
+            if (response.ok) {
+                templates.set(await response.json());
+            } else {
+                errorMessage = "Failed to fetch templates";
+            }
+        } catch (error) {
+            console.error("Error fetching templates:", error);
+            errorMessage = "Error fetching templates";
+        }
+    }
 
     // Handle file upload and preview
     const uploadFile = async (event) => {
@@ -106,7 +126,7 @@
         formData.append("description", description);
         formData.append("xSignature", get(markerX));
         formData.append("ySignature", get(markerY));
-        formData.append("signatureWidth", $markerSize.toString());
+        formData.append("signatureWidth", get(markerSize).toString());
         formData.append("userId", userIdValue);
 
         try {
@@ -118,8 +138,8 @@
             if (response.ok) {
                 successMessage.set("Template uploaded successfully");
                 errorMessage = '';
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                window
+                await fetchTemplates(userIdValue);
+                step.set(1);  // Reset to the first step after successful upload
             } else {
                 errorMessage = "Failed to upload template";
             }
@@ -172,6 +192,20 @@
                         Next
                     </button>
                 </div>
+            {/if}
+        </div>
+        <div class="mt-4">
+            <!-- Display all templates of the logged-in user -->
+            {#if $pdfUrl}
+            <h1 class="text-3xl font-bold text-center mb-6">My Templates</h1>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {#each $templates as template}
+                    <div class="bg-white shadow-md rounded px-6 pt-6 pb-8 mb-4 cursor-pointer" on:click={() => window.location.href = `/template/${template.id}`}>
+                        <h2 class="text-xl font-bold mb-2">{template.title}</h2>
+                        <p class="text-gray-600">{template.description}</p>
+                    </div>
+                {/each}
+            </div>
             {/if}
         </div>
     </div>
