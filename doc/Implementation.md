@@ -10,28 +10,29 @@ Das Frontend unserer Anwendung wurde mit Svelte entwickelt und bietet eine intui
 3. **Dokument signieren**: Benutzer können Dokumente elektronisch unterschreiben.
 4. **Templates erstellen**: Benutzer können Templates für wiederkehrende Dokumente erstellen.
 5. **API-Zugang (Pro-Version)**: Erlaubt den Zugriff auf API-Endpunkte für erweiterte Integrationen.
+5. **Adming zugang**: Erlaubt den Zugriff die Adminpage, wo Dokumente heruntergeladen, gelöscht und Metriken über die Webseite erfasst sind.
 
 ### Screenshots der Applikation:
 
 #### 1. Dokumentenübersicht
-![Dokumentenübersicht](screenshots/dokumentenübersicht.png)
+![Dokumentenübersicht](screenshots/dokumentenübersicht.PNG)
 
 #### 2. Dokument hochladen
-![Dokument hochladen 1](screenshots/dokument-hochladen1.png)
-![Dokument hochladen 2](screenshots/dokument-hochladen2.png)
+![Dokument hochladen 1](screenshots/dokument-hochladen1.PNG)
+![Dokument hochladen 2](screenshots/dokument-hochladen2.PNG)
 
 
 #### 3. Dokument signieren
-![Dokument signieren](screenshots/dokument-signieren.png)
+![Dokument signieren](screenshots/dokument-signieren.PNG)
 
 #### 4. Templates erstellen
-![Templates erstellen 1](screenshots/templates-erstellen1.png)
-![Templates erstellen 2](screenshots/templates-erstellen2.png)
+![Templates erstellen 1](screenshots/templates-erstellen1.PNG)
+![Templates erstellen 2](screenshots/templates-erstellen2.PNG)
 #### 5. API-Zugang (Pro-Version)
-![API-Zugang](screenshots/api-zugang.png)
+![API-Zugang](screenshots/api-zugang.PNG)
 
 #### 5. API-Zugang (Pro-Version)
-![Adminpage](screenshots/admin.png)
+![Adminpage](screenshots/admin.PNG)
 
 ## Klassendiagramm mit dem technischen Datenmodell (DTOs, DAOs) und deren Verwendungszweck
 
