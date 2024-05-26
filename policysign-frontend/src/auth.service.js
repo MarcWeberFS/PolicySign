@@ -128,7 +128,7 @@ async function saveUserToDB(userInfo) {
       body: JSON.stringify({
         username: `${userInfo.given_name} ${userInfo.family_name}`,
         email: userInfo.email,
-        id: userInfo.sub,
+        id: `auth0|${userInfo._id}`,
       })
     });
 

@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import ch.zhaw.policysign.model.Signatory;
 import ch.zhaw.policysign.repository.SignatoryRepository;
 
-import java.util.Optional;
-
 @Service
 public class SignatoryService {
 
