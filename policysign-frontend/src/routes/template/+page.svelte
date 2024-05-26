@@ -1,7 +1,11 @@
 <script>
     import { writable, get } from 'svelte/store';
-    import { userId } from '../../auth.service';
     import { onMount, onDestroy } from 'svelte';
+    import { userId, jwtToken } from '../../auth.service';
+    let jwt_token;
+    jwtToken.subscribe(value => {
+        jwt_token = value;
+    });
 
     const api_root = "http://localhost:8080";
 
@@ -53,7 +57,10 @@
     async function fetchTemplates(userId) {
         try {
             const response = await fetch(`${api_root}/api/templates/user/${userId}`, {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+                    Authorization: "Bearer " + jwt_token
+                }
             });
 
             if (response.ok) {
@@ -132,7 +139,10 @@
         try {
             const response = await fetch(`${api_root}/api/templates`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    Authorization: "Bearer " + jwt_token
+                }
             });
 
             if (response.ok) {

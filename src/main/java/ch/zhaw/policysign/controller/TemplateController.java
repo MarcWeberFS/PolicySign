@@ -4,10 +4,15 @@ import ch.zhaw.policysign.model.PolicyDocument;
 import ch.zhaw.policysign.model.Template;
 import ch.zhaw.policysign.service.EmailService;
 import ch.zhaw.policysign.service.PolicyDocumentService;
+import ch.zhaw.policysign.service.RoleService;
 import ch.zhaw.policysign.service.S3Service;
 import ch.zhaw.policysign.service.TemplateService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -43,23 +48,30 @@ public class TemplateController {
     @Autowired
     private S3Service s3Service;
 
-    
+    @Autowired
+    private RoleService roleService;
 
     @PostMapping
-    public Template createTemplate(
+    public ResponseEntity<Template> createTemplate(
             @RequestParam("file") MultipartFile file,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("xSignature") float xSignature,
             @RequestParam("ySignature") float ySignature,
             @RequestParam("signatureWidth") float signatureWidth,
-            @RequestParam("userId") String userId) throws MessagingException, IOException {
+            @RequestParam("userId") String userId,
+            @AuthenticationPrincipal Jwt jwt) throws MessagingException, IOException {
 
-                logger.info("Creating template");
+
+        if (!roleService.hasRole("user", jwt)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        logger.info("Creating template");
         String fileName = UUID.randomUUID().toString() + ".pdf"; // Use UUID for unique file names
         s3Service.uploadFileToS3(file, "templatespolicysign", fileName);
 
-                logger.info("uploaded file to S3");
+        logger.info("uploaded file to S3");
         Template template = new Template();
         template.setTitle(title);
         template.setDescription(description);
@@ -68,13 +80,19 @@ public class TemplateController {
         template.setSignatureWidth(signatureWidth);
         template.setUserId(userId);
         template.setUrl(fileName);
-                logger.info("saving template");
-        return templateService.saveTemplate(template);
+        logger.info("saving template");
+
+        return new ResponseEntity<>(templateService.saveTemplate(template), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public Optional<Template> getTemplateById(@PathVariable String id) {
-        return templateService.getTemplateById(id);
+    public ResponseEntity<Template> getTemplateById(@PathVariable String id, @AuthenticationPrincipal Jwt jwt) {
+        if (!roleService.hasRole("user", jwt)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        Optional<Template> template = templateService.getTemplateById(id);
+        return template.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                       .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/user/{userId}")

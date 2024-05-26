@@ -1,7 +1,12 @@
 <script>
     import { onMount } from 'svelte';
-    import { userId } from '../../auth.service'; // Ensure you have the userId from your auth service
     import { get } from 'svelte/store';
+    import { userId, jwtToken } from '../../auth.service';
+    let jwt_token;
+    jwtToken.subscribe(value => {
+        jwt_token = value;
+    });
+
 
     let userCount = 0;
     let documentCount = 0;
@@ -24,7 +29,10 @@
     async function fetchUserCount() {
         try {
             const response = await fetch(`${api_root}/api/users/count`, {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${jwt_token}`
+                }
             });
 
             if (response.ok) {
@@ -41,7 +49,10 @@
     async function fetchDocumentCount() {
         try {
             const response = await fetch(`${api_root}/api/upload/count`, {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${jwt_token}`
+                }
             });
 
             if (response.ok) {
@@ -58,7 +69,10 @@
     async function fetchAllDocuments() {
         try {
             const response = await fetch(`${api_root}/api/upload/all`, {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${jwt_token}`
+                }
             });
 
             if (response.ok) {
@@ -75,7 +89,10 @@
     async function deleteDocument(id) {
         try {
             const response = await fetch(`${api_root}/api/upload/delete/${id}`, {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${jwt_token}`
+                }
             });
 
             if (response.ok) {
@@ -154,7 +171,7 @@
             <div class="document-card w-full p-4">
                 <div class="bg-white shadow-md rounded-lg p-6">
                     <h2 class="text-xl font-bold mb-2">
-                        <a href={`${api_root}/api/upload/download/${document.id}`} download="{document.title}.pdf">{document.title}</a>
+                        <a href={`${api_root}/api/upload/download/${document.id}?token=${jwt_token}`} download="{document.title}.pdf">{document.title}</a>
                     </h2>
                     <div class="document-details">
                         <div>

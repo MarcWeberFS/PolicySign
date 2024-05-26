@@ -1,4 +1,5 @@
-import { createAuth0Client } from "@auth0/auth0-spa-js"; // npm install @auth0/auth0-spa-js
+// auth.service.js
+import { createAuth0Client } from "@auth0/auth0-spa-js"; 
 import { writable } from "svelte/store";
 import { user, jwt_token } from "./store";
 import { goto } from '$app/navigation';
@@ -6,6 +7,7 @@ import axios from "axios";
 import config from "./auth.config";
 
 export const userId = writable(localStorage.getItem('userId')); // Initialize userId store from local storage
+export const jwtToken = jwt_token;
 const api_root = "http://localhost:8080";
 let auth0Client;
 
@@ -63,11 +65,9 @@ function login(username, password, redirectToHome = false) {
     .then((response) => {
       const { id_token, access_token } = response.data;
       jwt_token.set(id_token);
-      console.log(id_token);
       localStorage.setItem("jwt_token", id_token);
       getUserInfo(access_token);
       if (redirectToHome) {
-        // Go to start page after 500ms to ensure isAuthenticated is set
         setTimeout(() => {
           goto("/");
         }, 500);
@@ -92,14 +92,10 @@ function getUserInfo(access_token) {
   axios(options)
     .then((response) => {
       const userInfo = response.data;
-      console.log("User Info:", userInfo); // Log user info to confirm
       user.set(userInfo);
       if (userInfo.sub) {
-        userId.set(userInfo.sub); // Set userId store
-        localStorage.setItem('userId', userInfo.sub); // Store userId in localStorage
-        console.log("User ID set:", userInfo.sub); // Log to confirm userId is set
-      } else {
-        console.log("No sub found in userInfo");
+        userId.set(userInfo.sub);
+        localStorage.setItem('userId', userInfo.sub);
       }
     })
     .catch(function (error) {
@@ -119,7 +115,7 @@ async function logout() {
   } catch (e) {
     console.error(e);
   }
-  goto("/"); // Return to main page
+  goto("/");
 }
 
 async function saveUserToDB(userInfo) {
@@ -132,8 +128,7 @@ async function saveUserToDB(userInfo) {
       body: JSON.stringify({
         username: `${userInfo.given_name} ${userInfo.family_name}`,
         email: userInfo.email,
-        roles: ['user'],
-        id: userInfo.sub, // Use the sub as the ID
+        id: userInfo.sub,
       })
     });
 
