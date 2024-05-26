@@ -205,8 +205,6 @@
             {/if}
         </div>
         <div class="mt-4">
-            <!-- Display all templates of the logged-in user -->
-            {#if $pdfUrl}
             <h1 class="text-3xl font-bold text-center mb-6">My Templates</h1>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {#each $templates as template}
@@ -216,7 +214,6 @@
                     </div>
                 {/each}
             </div>
-            {/if}
         </div>
     </div>
 {/if}
