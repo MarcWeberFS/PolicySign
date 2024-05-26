@@ -38,7 +38,7 @@ Das Frontend unserer Anwendung wurde mit Svelte entwickelt und bietet eine intui
 Das Klassendiagramm stellt die Struktur der Datenobjekte (DTOs) und Datenzugriffsobjekte (DAOs) dar, die in der Anwendung verwendet werden.
 
 ### Klassendiagramm
-![Klassendiagramm](class-diagramm.png)
+![Klassendiagramm](figures/class-diagramm.png)
 
 ### Beschreibung der Klassen
 
@@ -63,7 +63,7 @@ Das Klassendiagramm stellt die Struktur der Datenobjekte (DTOs) und Datenzugriff
    - **Verwendungszweck**: Speicherung der Unterschrifteninformationen. Speziell, ob ein Dokument bereits unterschreieben wurde oder nicht. Es wird nicht mehr signatureDataUrl also ein Base64 String des Dokuments abgespeichert, da dies Datenschutzmässig problematisch ist. Bei früheren Versionen wurde dies so implementiert und die bestehende Testsätze bleiben bestehen.
 
 
-![Klassendiagramm](class-diagramm-with-controller-and-service.png)
+![Klassendiagramm](figures/class-diagramm-with-controller-and-service.png)
 
 ### Klassendiagramm
 

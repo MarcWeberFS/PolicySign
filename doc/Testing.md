@@ -118,11 +118,4 @@ Derzeit sind keine End-to-End Tests implementiert.
 
 ## Erkenntnisse aus der Analyse mit SonarQube (falls vorhanden)
 
-Eine Analyse mit SonarQube wurde durchgeführt, um die Codequalität und mögliche Schwachstellen im Code zu identifizieren. Hier sind die wichtigsten Erkenntnisse:
-
-- **Code-Duplizierung:** Keine signifikanten Code-Duplikationen gefunden.
-- **Code-Smells:** Einige Code-Smells wurden identifiziert, wie z.B. lange Methoden und nicht verwendete Variablen. Diese wurden entsprechend behoben.
-- **Sicherheitslücken:** Keine schwerwiegenden Sicherheitslücken entdeckt.
-- **Testabdeckung:** Die Testabdeckung liegt bei über 80%, was auf eine solide Testbasis hinweist.
-
-Für detaillierte Berichte und spezifische Metriken kann der vollständige SonarQube-Bericht konsultiert werden.
+SonarQube wurde aus zeitlichen gründen nicht umgesetzt.
