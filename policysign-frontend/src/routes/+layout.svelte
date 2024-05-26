@@ -27,6 +27,8 @@
           <a href="/pricing" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Pricing</a>
           <a href="/documents" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Documents</a>
           <a href="/upload" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Upload</a>
+          <a href="/template" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Template</a>
+          <a href="/admin" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Admin</a>
           <a href="/signup" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 mt-3 mb-3 rounded-md text-sm font-medium">Signup</a>
         </div>
       </div>
@@ -39,6 +41,8 @@
       <a href="/pricing" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Pricing</a>
       <a href="/documents" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Documents</a>
       <a href="/upload" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Upload</a>
+      <a href="/template" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Template</a>
+      <a href="/admin" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Admin</a>
       <a href="/signup" class="text-gray-700 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Signup</a>
     </div>
   </div>

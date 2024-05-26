@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { writable } from "svelte/store";
 
-    const api_root = "http://localhost:8080";
+    const api_root = "https://policysign.azurewebsites.net";
 
     // Store for the PDF URL
     let pdfUrl = writable("");

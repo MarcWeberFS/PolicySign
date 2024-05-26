@@ -6,7 +6,7 @@
         jwt_token = value;
     });
 
-    const api_root = "http://localhost:8080";
+    const api_root = "https://policysign.azurewebsites.net";
 
     let file;
     let pdfUrl = writable("");

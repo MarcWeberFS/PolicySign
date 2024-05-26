@@ -12,7 +12,7 @@
   let showFirstNameError = false;
   let showLastNameError = false;
 
-  const api_root = "http://localhost:8080";
+  const api_root = "https://policysign.azurewebsites.net";
 
   $: if ($isAuthenticated) {
     email = "";

@@ -151,7 +151,7 @@
 - **Adminpage:** Einsehen von allen Dokumenten welche von Usern hochgeladen wurden, man sieht den Titel, die Description, den Status, wer signieren muss, Creation-, Updatedatum und ein Delete Knopf, wo man ein Dokument löschen kann. Durch den Click auf den Titel wird das Dokument runter geladen.
 
 
-![Template UI](figures/templatespage.jpg)
+![Template UI](figures/templates.jpg)
 
 ### Beschreibung
 - **Templatespage:** Genau gleich wie bei upload kann hier ein Dokument als ein Template hochgeladen werden, es wird aber nicht nach einer Email gefragt. Unterhalb des Uploadknopfs befinden sich alle Templates, wenn man auf ein Template drauf klickt kommt man auf eine neue Page wo man als API call den die Dienstleistung in seinem service einbauen kann. Zuerst muss man definieren was passieren soll. Soll eine Email verschickt werden oder eine Link retourniert werden. Unten kann man die Programmier sprache auswählen, von wo aus man den API Call kopieren kann.

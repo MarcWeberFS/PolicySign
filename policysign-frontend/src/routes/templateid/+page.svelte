@@ -22,7 +22,7 @@
 
     async function fetchTemplate(id) {
         try {
-            const response = await fetch(`http://localhost:8080/api/templates/${id}`, {
+            const response = await fetch(`https://policysign.azurewebsites.net/api/templates/${id}`, {
                 headers: {
                     Authorization: "Bearer " + jwt_token
                 }
@@ -64,7 +64,7 @@ import java.io.*;
 import java.net.*;
 public class ApiCall {
     public static void main(String[] args) throws Exception {
-        URL url = new URL("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}");
+        URL url = new URL("https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -87,19 +87,19 @@ public class ApiCall {
                 `;
             case 'curl':
                 return `
-curl -X POST "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}" -H "Content-Type: application/json"
+curl -X POST "https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}" -H "Content-Type: application/json"
                 `;
             case 'python':
                 return `
 import requests
 
-url = "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}"
+url = "https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}"
 response = requests.post(url, headers={"Content-Type": "application/json"})
 print(response.text)
                 `;
             case 'javascript':
                 return `
-fetch("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}", {
+fetch("https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -112,7 +112,7 @@ fetch("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=
             case 'php':
                 return `
 <?php
-$url = "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}";
+$url = "https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}";
 $options = array(
     'http' => array(
         'header'  => "Content-type: application/json\\r\\n",
