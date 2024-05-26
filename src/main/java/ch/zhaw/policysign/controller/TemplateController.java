@@ -141,7 +141,7 @@ public class TemplateController {
         PolicyDocument savedDocument = policyDocumentService.savePolicyDocument(policyDocument);
     
         if (link) {
-            return "http://localhost:8080/signature?id=" + savedDocument.getId();
+            return "https://policysign.azurewebsites.net/signature?id=" + savedDocument.getId();
         } else {
             String emailContent = "<html>" +
                     "<body>" +
@@ -149,7 +149,7 @@ public class TemplateController {
                     "<p>A new policy document requires your signature.</p>" +
                     "<p><b>Description:</b> " + savedDocument.getDescription() + "</p>" +
                     "<p>Please review and sign the document at your earliest convenience.</p>" +
-                    "<p><a href='http://localhost:8080/signature?id=" + savedDocument.getId() + "'>Click here to sign the document</a></p>" +
+                    "<p><a href='https://policysign.azurewebsites.net/signature?id=" + savedDocument.getId() + "'>Click here to sign the document</a></p>" +
                     "<p>Thank you.</p>" +
                     "</body>" +
                     "</html>";

@@ -13,7 +13,7 @@
     let documents = [];
     let errorMessage = "";
 
-    const api_root = "http://localhost:8080";
+    const api_root = "https://policysign.azurewebsites.net";
 
     // Redirect to login if not authenticated
     $: if (!get(userId)) {

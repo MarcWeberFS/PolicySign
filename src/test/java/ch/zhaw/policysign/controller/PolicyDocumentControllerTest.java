@@ -2,7 +2,6 @@ package ch.zhaw.policysign.controller;
 
 import ch.zhaw.policysign.model.DocumentStatus;
 import ch.zhaw.policysign.model.PolicyDocument;
-import ch.zhaw.policysign.model.Template;
 import ch.zhaw.policysign.service.*;
 import ch.zhaw.policysign.util.Auth0TokenUtil;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;

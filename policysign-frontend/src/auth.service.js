@@ -8,7 +8,7 @@ import config from "./auth.config";
 
 export const userId = writable(localStorage.getItem('userId')); // Initialize userId store from local storage
 export const jwtToken = jwt_token;
-const api_root = "http://localhost:8080";
+const api_root = "https://policysign.azurewebsites.net";
 let auth0Client;
 
 async function createClient() {

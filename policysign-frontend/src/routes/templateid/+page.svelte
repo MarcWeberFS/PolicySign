@@ -1,10 +1,10 @@
 <script>
     import { writable, get } from 'svelte/store';
-
     import { onMount, afterUpdate } from 'svelte';
     import hljs from 'highlight.js';
     import 'highlight.js/styles/github.css';
     import { userId, jwtToken } from '../../auth.service';
+    
     let jwt_token;
     jwtToken.subscribe(value => {
         jwt_token = value;
@@ -12,17 +12,13 @@
 
     let link = true;
     let language = 'java';
-
-
     let userIdValue;
     let template = {};
     let error = '';
 
-
-
     async function fetchTemplate(id) {
         try {
-            const response = await fetch(`http://localhost:8080/api/templates/${id}`, {
+            const response = await fetch(`https://policysign.azurewebsites.net/api/templates/${id}`, {
                 headers: {
                     Authorization: "Bearer " + jwt_token
                 }
@@ -49,12 +45,13 @@
         await fetchTemplate(id);
     });
 
+    $: codeContent = generateApiCall(language, template.id, link, userIdValue);
+
     afterUpdate(() => {
         document.querySelectorAll('pre code').forEach((block) => {
-            hljs.highlightBlock(block);
+            hljs.highlightElement(block);
         });
     });
-
 
     function generateApiCall(language, id, link, userId) {
         switch (language) {
@@ -64,7 +61,7 @@ import java.io.*;
 import java.net.*;
 public class ApiCall {
     public static void main(String[] args) throws Exception {
-        URL url = new URL("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}");
+        URL url = new URL("https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -87,19 +84,19 @@ public class ApiCall {
                 `;
             case 'curl':
                 return `
-curl -X POST "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}" -H "Content-Type: application/json"
+curl -X POST "https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}" -H "Content-Type: application/json"
                 `;
             case 'python':
                 return `
 import requests
 
-url = "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}"
+url = "https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}"
 response = requests.post(url, headers={"Content-Type": "application/json"})
 print(response.text)
                 `;
             case 'javascript':
                 return `
-fetch("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}", {
+fetch("https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -112,7 +109,7 @@ fetch("http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=
             case 'php':
                 return `
 <?php
-$url = "http://localhost:8080/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}";
+$url = "https://policysign.azurewebsites.net/api/templates/use/${id}?link=${link}&signedByEmail=SIGNERSEMAIL&userId=${userId}";
 $options = array(
     'http' => array(
         'header'  => "Content-type: application/json\\r\\n",
@@ -176,9 +173,9 @@ var_dump($result);
             </div>
 
             <pre class="text-sm bg-gray-100 p-4 rounded mb-4 overflow-x-auto">
-                <code>{generateApiCall(language, template.id, link, userIdValue)}</code>
+                <code>{codeContent}</code>
             </pre>
-            <button on:click={() => copyToClipboard(generateApiCall(language, template.id, link, userIdValue))} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <button on:click={() => copyToClipboard(codeContent)} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Copy to Clipboard
             </button>
         </div>
