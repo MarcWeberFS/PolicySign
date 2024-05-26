@@ -22,7 +22,7 @@ Einige wichtige Aspekte, die besonders hervorzuheben sind:
 Obwohl die grundlegenden Funktionen implementiert sind, gibt es noch mehrere Bereiche, die weiterentwickelt werden können:
 
 1. **Erweiterung der API**: Zusätzliche API-Endpunkte könnten entwickelt werden, um mehr Flexibilität und Funktionalität für Pro-Benutzer bereitzustellen.
-2. **Erweiterte Sicherheitsmaßnahmen**: Weitere Sicherheitsmaßnahmen wie Zwei-Faktor-Authentifizierung und erweiterte Verschlüsselungstechniken könnten implementiert werden.
+2. **Erweiterte Sicherheitsmassnahmen**: Weitere Sicherheitsmassnahmen wie Zwei-Faktor-Authentifizierung und erweiterte Verschlüsselungstechniken könnten implementiert werden.
 3. **Optimierung der Benutzeroberfläche**: Basierend auf Benutzerfeedback könnten weitere Verbesserungen an der Benutzeroberfläche vorgenommen werden, um die Nutzererfahrung weiter zu verbessern.
 4. **Internationalisierung**: Die Anwendung könnte für den internationalen Markt angepasst und in mehrere Sprachen übersetzt werden.
 5. **Automatisierte Tests**: Implementierung weiterer automatisierter Tests zur Sicherstellung der Softwarequalität und zur Erleichterung zukünftiger Wartungsarbeiten.

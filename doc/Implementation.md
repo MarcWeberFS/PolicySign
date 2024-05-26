@@ -2,7 +2,7 @@
 
 ## Beschreibung des Frontends mit Screenshots der fertigen Applikation
 
-Das Frontend unserer Anwendung wurde mit Svelte entwickelt und bietet eine intuitive Benutzeroberfläche, die den Benutzern ermöglicht, Dokumente hochzuladen, zu signieren, Templates zu erstellen und den Status ihrer Dokumente zu überwachen. Die Anwendung ist responsiv und für verschiedene Bildschirmgrößen optimiert. 
+Das Frontend unserer Anwendung wurde mit Svelte entwickelt und bietet eine intuitive Benutzeroberfläche, die den Benutzern ermöglicht, Dokumente hochzuladen, zu signieren, Templates zu erstellen und den Status ihrer Dokumente zu überwachen. Die Anwendung ist responsiv und für verschiedene Bildschirmgrössen optimiert. 
 
 ### Hauptfunktionen:
 1. **Dokumentenübersicht**: Benutzer können eine Liste ihrer hochgeladenen Dokumente einsehen.
