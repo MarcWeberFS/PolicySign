@@ -1,20 +1,32 @@
 <script>
     import { writable, get } from 'svelte/store';
-    import { userId } from '../../auth.service';
+
     import { onMount, afterUpdate } from 'svelte';
     import hljs from 'highlight.js';
     import 'highlight.js/styles/github.css';
+    import { userId, jwtToken } from '../../auth.service';
+    let jwt_token;
+    jwtToken.subscribe(value => {
+        jwt_token = value;
+    });
 
     let link = true;
     let language = 'java';
+
 
     let userIdValue;
     let template = {};
     let error = '';
 
+
+
     async function fetchTemplate(id) {
         try {
-            const response = await fetch(`http://localhost:8080/api/templates/${id}`);
+            const response = await fetch(`http://localhost:8080/api/templates/${id}`, {
+                headers: {
+                    Authorization: "Bearer " + jwt_token
+                }
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch template');
             }

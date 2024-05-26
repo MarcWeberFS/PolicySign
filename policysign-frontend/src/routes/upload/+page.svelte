@@ -1,6 +1,10 @@
 <script>
     import { writable } from "svelte/store";
-    import { v4 as uuidv4 } from "uuid";
+    import { userId, jwtToken } from '../../auth.service';
+    let jwt_token;
+    jwtToken.subscribe(value => {
+        jwt_token = value;
+    });
 
     const api_root = "http://localhost:8080";
 
@@ -115,7 +119,10 @@
         try {
             const response = await fetch(api_root + "/api/upload", {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    Authorization: "Bearer " + jwt_token
+                }
             });
 
             if (response.ok) {

@@ -1,7 +1,11 @@
 <script>
     import { onMount } from 'svelte';
-    import { userId } from '../../auth.service';
     import { get } from 'svelte/store';
+    import { userId, jwtToken } from '../../auth.service';
+    let jwt_token;
+    jwtToken.subscribe(value => {
+        jwt_token = value;
+    });
 
     let documents = [];
     let errorMessage = "";
@@ -17,7 +21,10 @@
         if (currentUserId) {
             try {
                 const response = await fetch(`${api_root}/api/upload/user/${currentUserId}`, {
-                    method: 'GET'
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${jwt_token}`
+                    }
                 });
 
                 if (response.ok) {
@@ -77,7 +84,7 @@
             <div class="document-card w-full p-4">
                 <div class="bg-white shadow-md rounded-lg p-6">
                     <h2 class="text-xl font-bold mb-2">
-                        <a href={`${api_root}/api/upload/download/${document.id}`} download="{document.title}.pdf">{document.title}</a>
+                        <a href={`${api_root}/api/upload/download/${document.id}?token=${jwt_token}`} download="{document.title}.pdf">{document.title}</a>
                     </h2>
                     <div class="document-details">
                         <div>

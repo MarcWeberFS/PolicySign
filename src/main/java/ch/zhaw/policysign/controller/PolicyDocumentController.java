@@ -5,6 +5,7 @@ import ch.zhaw.policysign.model.DocumentStatus;
 import ch.zhaw.policysign.model.PolicyDocument;
 import ch.zhaw.policysign.service.EmailService;
 import ch.zhaw.policysign.service.PolicyDocumentService;
+import ch.zhaw.policysign.service.RoleService;
 import ch.zhaw.policysign.service.S3Service;
 import jakarta.mail.MessagingException;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -14,8 +15,12 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,8 +44,14 @@ public class PolicyDocumentController {
     @Autowired
     private S3Service s3Service;
 
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private JwtDecoder jwtDecoder;
+
     @PostMapping
-    public PolicyDocument submitPolicyDocument(
+    public ResponseEntity submitPolicyDocument(
             @RequestParam("file") MultipartFile file,
             @RequestParam("signedByEmail") String email,
             @RequestParam("title") String title,
@@ -48,7 +59,12 @@ public class PolicyDocumentController {
             @RequestParam("xSignature") float xSignature,
             @RequestParam("ySignature") float ySignature,
             @RequestParam("signatureWidth") float signatureWidth,
-            @RequestParam("userId") String userId) throws MessagingException, IOException {
+            @RequestParam("userId") String userId,
+            @AuthenticationPrincipal Jwt jwt) throws MessagingException, IOException {
+
+        if (!roleService.hasRole("user", jwt)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
         String fileName = UUID.randomUUID().toString() + ".pdf"; // Use UUID for unique file names
         s3Service.uploadFileToS3(file, "policysign", fileName);
@@ -83,17 +99,26 @@ public class PolicyDocumentController {
         // Send email notification
         emailService.sendHtmlEmail(savedDocument.getSignedByEmail(), savedDocument.getTitle(), emailContent);
 
-        return savedDocument;
+        return new ResponseEntity<>(savedDocument, HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}")
-    public List<PolicyDocument> getDocumentsByUserId(@PathVariable String userId) {
+    public ResponseEntity<List<PolicyDocument>> getDocumentsByUserId(@PathVariable String userId, @AuthenticationPrincipal Jwt jwt) {
+
+        if (!roleService.hasRole("user", jwt)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         System.out.println("Getting documents for user ID: " + userId);
-        return policyDocumentService.getDocumentsByUserId(userId);
+        return new ResponseEntity<>(policyDocumentService.getDocumentsByUserId(userId), HttpStatus.OK);
     }
 
     @GetMapping("/download/{id}")
-    public ResponseEntity<InputStreamResource> downloadDocument(@PathVariable String id) {
+    public ResponseEntity<InputStreamResource> downloadDocument(@PathVariable String id, @RequestParam String token) {
+        Jwt jwt = jwtDecoder.decode(token);
+        if (!roleService.hasRole("user", jwt)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         PolicyDocument document = policyDocumentService.getPolicyDocumentById(id);
 
         if (document.getUrl() == null || document.getUrl().isEmpty()) {
@@ -114,18 +139,28 @@ public class PolicyDocumentController {
     }
 
     @GetMapping("/all")
-    public List<PolicyDocument> getAllDocuments() {
-        return policyDocumentService.getAllPolicyDocuments();
+    public ResponseEntity<List<PolicyDocument>> getAllDocuments(@AuthenticationPrincipal Jwt jwt) {
+        if (!roleService.hasRole("admin", jwt)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity(policyDocumentService.getAllPolicyDocuments(), HttpStatus.OK);
     }
 
     @GetMapping("/count")
-    public long getDocumentCount() {
-        return policyDocumentService.getPolicyDocumentCount();
+    public ResponseEntity<Long> getDocumentCount(@AuthenticationPrincipal Jwt jwt) {
+        if (!roleService.hasRole("admin", jwt)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity(policyDocumentService.getPolicyDocumentCount(), HttpStatus.OK);
     }
 
     @PostMapping("/delete/{id}")
-    public void deleteDocument(@PathVariable String id) {
+    public ResponseEntity deleteDocument(@PathVariable String id, @AuthenticationPrincipal Jwt jwt) {
+        if (!roleService.hasRole("admin", jwt)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         policyDocumentService.deletePolicyDocument(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
