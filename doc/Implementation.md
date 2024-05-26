@@ -15,24 +15,23 @@ Das Frontend unserer Anwendung wurde mit Svelte entwickelt und bietet eine intui
 ### Screenshots der Applikation:
 
 #### 1. Dokumentenübersicht
-![Dokumentenübersicht](screenshots/dokumentenübersicht.PNG)
+![Dokumentenübersicht](figures/dokumentenübersicht.PNG)
 
 #### 2. Dokument hochladen
-![Dokument hochladen 1](screenshots/dokument-hochladen1.PNG)
-![Dokument hochladen 2](screenshots/dokument-hochladen2.PNG)
-
+![Dokument hochladen 1](figures/dokument-hochladen1.PNG)
+![Dokument hochladen 2](figures/dokument-hochladen2.PNG)
 
 #### 3. Dokument signieren
-![Dokument signieren](screenshots/dokument-signieren.PNG)
+![Dokument signieren](figures/dokument-signieren.PNG)
 
 #### 4. Templates erstellen
-![Templates erstellen 1](screenshots/templates-erstellen1.PNG)
-![Templates erstellen 2](screenshots/templates-erstellen2.PNG)
+![Templates erstellen 1](figures/templates-erstellen1.PNG)
+![Templates erstellen 2](figures/templates-erstellen2.PNG)
 #### 5. API-Zugang (Pro-Version)
-![API-Zugang](screenshots/api-zugang.PNG)
+![API-Zugang](figures/api-zugang.PNG)
 
 #### 5. API-Zugang (Pro-Version)
-![Adminpage](screenshots/admin.PNG)
+![Adminpage](figures/admin.PNG)
 
 ## Klassendiagramm mit dem technischen Datenmodell (DTOs, DAOs) und deren Verwendungszweck
 
